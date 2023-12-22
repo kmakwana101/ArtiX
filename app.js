@@ -7,7 +7,6 @@ let session = require("express-session")
 let passport = require("passport")
 let mongoose =  require("mongoose")
 let cors = require("cors")
-let nodemailer = require("nodemailer")
 
 
 var indexRouter = require('./routes/index');
@@ -23,10 +22,13 @@ var usersRouter = require('./models/users_models');
 
 var app = express();
 app.use(cors())
+require('dotenv').config();
 
-mongoose.connect('mongodb+srv://kmakwana1255:kmakwana@cluster1.hfoy8xo.mongodb.net/')
-  .then(() => console.log('Connected!'))
-  .catch((error) => console.log(error.message))
+const uri = process.env.MONGODB_CONNECT_URI;
+
+mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
+  .then(() => console.log('Connected to MongoDB!'))
+  .catch(error => console.error('Error connecting to MongoDB:', error.message));
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
