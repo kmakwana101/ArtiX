@@ -21,8 +21,8 @@ var usersRouter = require('./models/users_models');
 // let session = require("express-session")
 
 var app = express();
-app.use(cors())
 require('dotenv').config();
+app.use(cors())
 
 const uri = process.env.MONGODB_CONNECT_URI;
 
