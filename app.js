@@ -26,7 +26,7 @@ app.use(cors())
 
 const uri = process.env.MONGODB_CONNECT_URI;
 
-mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
+mongoose.connect(uri || "mongodb+srv://kmakwana1255:kmakwana@cluster1.hfoy8xo.mongodb.net/test?retryWrites=true&w=majority", { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => console.log('Connected to MongoDB!'))
   .catch(error => console.error('Error connecting to MongoDB:', error.message));
 
