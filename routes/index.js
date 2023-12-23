@@ -32,7 +32,7 @@ passport.use(new passportlocal(USER.authenticate()))
 //   }
 // });
 
-router.post('/api/gmail',async(req,res)=>{
+router.post('/api/gmail', async (req, res) => {
   const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
@@ -40,7 +40,7 @@ router.post('/api/gmail',async(req,res)=>{
       pass: 'isot ilqk ayoa kawe'
     }
   });
-  console.log(req.body);
+  // console.log(req.body);
   const mailOptions = {
     from: 'youremail@gmail.com',
     to: req.body.gmail,
@@ -58,9 +58,9 @@ router.post('/api/gmail',async(req,res)=>{
 
 router.get("/api/category", async (req, res) => {
   let PageNo = Number(req.query.page) || 1
-  let limit = Number(4)
-  let data = await POST.find({categori : req.query.id}).skip((PageNo-1)*limit).limit(4)
-  
+  let limit = Number(5)
+  let data = await POST.find({ categori: req.query.id }).skip((PageNo - 1) * limit).limit(4)
+
   try {
     res.status(201).json({
       status: "success",
@@ -69,7 +69,7 @@ router.get("/api/category", async (req, res) => {
   } catch (error) {
     res.status(404).json({
       status: "fail",
-      message: "not found categori"
+      message: "not found category"
     })
   }
 })
@@ -77,7 +77,7 @@ router.get("/api/category", async (req, res) => {
 // show categori post
 router.get("/api/AdminPanel/:cat_name", async (req, res) => {
   const catName = req.params.cat_name;
-  try { 
+  try {
     // Query the database using Mongoose (assuming CATEGORI is a Mongoose model)
     let data = await CATEGORI.find({ cat_name: catName }).populate("posts");
     // If no data is found, throw an error
@@ -105,13 +105,13 @@ router.delete("/api/posts/:postid", async (req, res) => {
   try {
     const deletedPost = await POST.findByIdAndDelete(req.params.postid);
     let del_p_cat = await deletedPost.categori
-    let ccc = await CATEGORI.updateOne(
+    await CATEGORI.updateOne(
       { "_id": del_p_cat },
       { $pull: { "posts": deletedPost._id } }
     )
-    console.log(ccc + "acccc");
+    // console.log(ccc + "acccc");
     if (deletedPost) {
-      console.log('Deleted Post:', deletedPost);
+      // console.log('Deleted Post:', deletedPost);
       res.status(200).json({ message: 'Post deleted successfully' });
     } else {
       console.log('Post not found');
@@ -123,9 +123,7 @@ router.delete("/api/posts/:postid", async (req, res) => {
   }
 });
 
-
 // get data to update page
-
 router.get("/admin/posts/update/:id", async (req, res) => {
   const id = req.params.id
   try {
@@ -154,14 +152,13 @@ router.post("/admin/posts/update/:id", upload.fields([
   { name: 'post_img6', maxCount: 1 },
 ]), async (req, res) => {
   const id = req.params.id;
-  console.log('Received data:-----------', req.body ,"------------------");
   try {
     const post = await POST.findById({ _id: id });
 
     if (!post) {
       return res.status(404).json({ message: "Post Not Found" });
     }
-    console.log(post.description_1 + "main heading olg");
+    // console.log(post.description_1 + "main heading olg");
     // Update other fields
     post.main_heading = req.body.main_heading || post.main_heading;
     post.description_1 = req.body.description_1 || post.description_1;
@@ -169,7 +166,7 @@ router.post("/admin/posts/update/:id", upload.fields([
     post.description_3 = req.body.description_3 || post.description_3;
     post.description_4 = req.body.description_4 || post.description_4;
 
-    console.log(post.description_1 + "new main heading");
+    // console.log(post.description_1 + "new main heading");
 
     // Update image fields if files are uploaded
     if (req.files) {
@@ -183,11 +180,11 @@ router.post("/admin/posts/update/:id", upload.fields([
 
     // Save the updated post
     const updatedPost = await post.save();
-    
     res.status(200).json({
       message: "Success",
       data: updatedPost
     });
+
   } catch (error) {
     res.status(500).json({
       status: "fail",
@@ -197,17 +194,18 @@ router.post("/admin/posts/update/:id", upload.fields([
 });
 
 // create post
+router.post('/api/posts/create', upload.fields([
+  { name: 'post_img1', maxCount: 1 }, 
+  { name: 'post_img2', maxCount: 1 }, 
+  { name: 'post_img3', maxCount: 1 }, 
+  { name: 'post_img4', maxCount: 1 }, 
+  { name: 'post_img5', maxCount: 1 }, 
+  { name: 'post_img6', maxCount: 1 }]), async (req, res) => {
 
-router.post('/api/posts/create', upload.fields([{ name: 'post_img1', maxCount: 1 }, { name: 'post_img2', maxCount: 1 }, { name: 'post_img3', maxCount: 1 }, { name: 'post_img4', maxCount: 1 }, { name: 'post_img5', maxCount: 1 }, { name: 'post_img6', maxCount: 1 }]), async (req, res) => {
- console.log("asdf=============================================");
-  try {
-    // console.log("---------------------------------",req.body,"----------------------------------");
-    // console.log(req.query.id);
+    try {
     let category11 = await CATEGORI.findById(req.query.id)
-    // console.log(category11,"-------------------------------");
-    // console.log(category11 + " new data" ,req.body);
+
     let slug = slugfield.convert(req.body.main_heading)
-    // console.log(slug);
     // File paths for the uploaded images
     const post_img1 = req.files['post_img1'][0].filename;
     const post_img2 = req.files['post_img2'][0].filename;
@@ -218,20 +216,20 @@ router.post('/api/posts/create', upload.fields([{ name: 'post_img1', maxCount: 1
 
     // Create a new post using the PostSchema
     const newPost = new POST({
-      post_img1 : post_img1,
-      main_heading : req.body.main_heading,
-      description_1 : req.body.description_1,
-      post_img2 : post_img2,
-      description_2 : req.body.description_2,
-      post_img3 : post_img3,
-      description_3:req.body.description_3,
-      post_img4 : post_img4,
-      post_img5 :post_img5,
-      description_4 :req.body.description_4,
-      post_img6 : post_img6,
-      slug : slug,
-      categori : category11._id,
-      cat_name : category11.cat_name
+      post_img1: post_img1,
+      main_heading: req.body.main_heading,
+      description_1: req.body.description_1,
+      post_img2: post_img2,
+      description_2: req.body.description_2,
+      post_img3: post_img3,
+      description_3: req.body.description_3,
+      post_img4: post_img4,
+      post_img5: post_img5,
+      description_4: req.body.description_4,
+      post_img6: post_img6,
+      slug: slug,
+      categori: category11._id,
+      cat_name: category11.cat_name
     });
     // Save the post to the database
     await newPost.save();
@@ -244,8 +242,6 @@ router.post('/api/posts/create', upload.fields([{ name: 'post_img1', maxCount: 1
     res.status(500).json({ message: 'Internal server error' });
   }
 });
-
-
 
 router.get("/api/posts", async (req, res) => {
   try {
@@ -265,85 +261,81 @@ router.get("/api/posts", async (req, res) => {
   }
 })
 
-
-router.post("/api/fullpost",async (req,res)=>{
+router.post("/api/fullpost", async (req, res) => {
   try {
     let data = await POST.findById(req.query.id)
-    if(!data){
+    if (!data) {
       throw new Error("post not available")
     }
     res.status(200).json({
-      status : "success",
-      data : data
+      status: "success",
+      data: data
     })
   } catch (error) {
     res.status(200).json({
-      status : "success",
-      message : error.message
+      status: "success",
+      message: error.message
     })
   }
 })
 
-
 // all category
-
-router.get("/api/allcategory",async(req,res)=>{
+router.get("/api/allcategory", async (req, res) => {
   try {
     let data = await CATEGORI.find()
     res.status(200).json({
-      status : "success",
-      data : data
+      status: "success",
+      data: data
     })
   } catch (error) {
     res.status(200).json({
-      status : "fail",
-      message : error.message
+      status: "fail",
+      message: error.message
     })
   }
 })
 
 // search
-router.get("/api/search",async(req,res)=>{
+router.get("/api/search", async (req, res) => {
   try {
-    let regex = new RegExp(req.query.search,"i")
-    let data = await POST.find( {$or: [
-      {main_heading : regex },
-      {cat_name : regex }
-      // ...additional conditions
-    ]})
+    let regex = new RegExp(req.query.search, "i")
+    let data = await POST.find({
+      $or: [
+        { main_heading: regex },
+        { cat_name: regex }
+      ]
+    })
     res.status(200).json({
-      status : "success",
-      data : data
+      status: "success",
+      data: data
     })
   } catch (error) {
     res.status(200).json({
-      status : "fail",
-      message : error.message
+      status: "fail",
+      message: error.message
     })
   }
 })
 
 // pagination
-router.get("/api/page",async(req,res)=>{
-  let PageNo =  Number(req.query.page || 1) ;
-  let limit =   parseInt(req.query.limit) || 10 ;
+router.get("/api/page", async (req, res) => {
+  let PageNo = Number(req.query.page || 1);
+  let limit = parseInt(req.query.limit) || 10;
   try {
-    let Post = await POST.find().skip((PageNo-1)*limit).limit(limit)
+    let Post = await POST.find().skip((PageNo - 1) * limit).limit(limit)
     res.status(200).json({
-      message : "success",
-      data : Post
+      message: "success",
+      data: Post
     })
-
   } catch (error) {
     res.status(400).json({
-      message : "fail",
-      message : error.message
+      message: "fail",
+      message: error.message
     })
   }
 })
 
 // Authentication System
-
 router.get('/register', function (req, res, next) {
   res.render('index', { title: 'Express' });
 });
@@ -420,30 +412,24 @@ function isLoggedIn(req, res, next) {
   res.redirect("/")
 }
 
-
 //  admin routes
 router.get('/api/admin', async (req, res) => {
   // Check if the user is an admin
   if (req.user && req.user.isAdmin) {
     try {
-      // Fetch data for the admin dashboard
       const data = {
         totalPosts: await POST.countDocuments(),
         totalCategories: await CATEGORI.countDocuments(),
         totalUsers: await USER.countDocuments(),
       };
       let allCategories = await CATEGORI.find({});
-
       res.json({ success: true, data, allCategories });
-
     } catch (error) {
       res.status(500).json({ success: false, error: 'Internal Server Error' });
     }
   } else {
-    // If not an admin, send an error response
     res.status(403).json({ success: false, error: 'Unauthorized' });
   }
 });
-
 
 module.exports = router;
