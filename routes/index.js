@@ -60,12 +60,12 @@ router.get("/api/category", async (req, res) => {
   let PageNo = Number(req.query.page) || 1
   let limit = Number(4)
   let data = await POST.find({categori : req.query.id}).skip((PageNo-1)*limit).limit(4)
+  
   try {
     res.status(201).json({
       status: "success",
       data: data
     })
-
   } catch (error) {
     res.status(404).json({
       status: "fail",

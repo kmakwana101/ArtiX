@@ -25,7 +25,7 @@ require('dotenv').config();
 app.use(cors())
 
 const uri = process.env.MONGODB_CONNECT_URI;
-
+// mongodb+srv://kmakwana1255:<password>@cluster1.hfoy8xo.mongodb.net/?retryWrites=true&w=majority
 mongoose.connect(uri || "mongodb+srv://kmakwana1255:kmakwana@cluster1.hfoy8xo.mongodb.net/test?retryWrites=true&w=majority", { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => console.log('Connected to MongoDB!'))
   .catch(error => console.error('Error connecting to MongoDB:', error.message));
