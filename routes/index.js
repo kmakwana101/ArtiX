@@ -42,7 +42,7 @@ router.post('/api/gmail', async (req, res) => {
   });
   // console.log(req.body);
   const mailOptions = {
-    from: 'youremail@gmail.com',
+    from: 'kmakwana8232@gmail.com',
     to: req.body.gmail,
     subject: 'Hello I am Mr Makwana',
     text: 'That was easy!'
