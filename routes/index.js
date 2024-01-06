@@ -33,28 +33,29 @@ passport.use(new passportlocal(USER.authenticate()))
 // });
 
 router.post('/api/gmail', async (req, res) => {
+  console.log(req.body);
+
   const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
-      user: 'kmakwana8232@gmail.com',
-      pass: 'isot ilqk ayoa kawe'
+      user: 'khushalmakwana786@gmail.com',
+      pass: 'tpjj mcuq tbuf aauq'
     }
   });
-  // console.log(req.body);
   const mailOptions = {
     from: 'kmakwana8232@gmail.com',
     to: req.body.gmail,
-    subject: 'Hello I am Mr Makwana',
-    text: 'That was easy!'
+    subject: 'Hello!',
+    html  : '<h2>Hello I am Khushal</h2>Visit my PortFolio ( <a href="https://portfolio-khushal-makwana.netlify.app/">PortFolio</a> ) <br><h4>This is My Resume</h4> <br> <img src="http://res.cloudinary.com/dgcqvuu01/image/upload/v1704518736/dregc45x0nvs44iiwmaf.jpg"/> <br><br> Thank you for Visiting my Website'
   };
   try {
     const info = await transporter.sendMail(mailOptions);
     console.log('Email sent: ' + info.response);
   } catch (error) {
     console.error('Error sending email:', error);
-    // Handle the error as needed (e.g., send an error response to the client)
   }
 })
+
 
 router.get("/api/category", async (req, res) => {
   let PageNo = Number(req.query.page) || 1
