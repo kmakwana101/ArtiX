@@ -247,7 +247,7 @@ router.post('/api/posts/create', upload.fields([
 
 router.get("/api/posts", async (req, res) => {
   try {
-    let allpost = await POST.find().sort({ _id: -1 });
+    let allpost = await POST.aggregate([{$sample : {size :20}}])
     if (!allpost) {
       throw new Error("post not found")
     }
