@@ -14,7 +14,8 @@ passport.use(new passportlocal(USER.authenticate()))
 router.get('/data', async function (req, res, next) {
   try {
    
-   res.send('khushal')
+   res.render('index', { user: req.user });
+    
   } catch (error) {
     res.status(404).json({
       status: "fail",
