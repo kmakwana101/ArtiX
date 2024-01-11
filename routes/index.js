@@ -11,26 +11,17 @@ let nodemailer = require("nodemailer")
 
 passport.use(new passportlocal(USER.authenticate()))
 
-// router.get('/', async function (req, res, next) {
-//   try {
-//     let data = await CATEGORI.create({
-//       cat_name: "Lifestyle",
-//     })
-//     if (!data) {
-//       throw new Error("please enter valid data")
-//     }
-//     res.status(200).json({
-//       status: "success",
-//       message: "all data",
-//       data: data
-//     })
-//   } catch (error) {
-//     res.status(404).json({
-//       status: "fail",
-//       message: error.message
-//     })
-//   }
-// });
+router.get('/data', async function (req, res, next) {
+  try {
+   
+   res.send('khushal')
+  } catch (error) {
+    res.status(404).json({
+      status: "fail",
+      message: error.message
+    })
+  }
+});
 
 router.post('/api/gmail', async (req, res) => {
   try {
